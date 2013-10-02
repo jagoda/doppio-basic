@@ -214,6 +214,26 @@ describe("The plugin", function () {
         }
     );
     
+    it(
+        "can configure the PORT without configuring the APP_URL",
+        function (done) {
+            process.env.PORT = 54321;
+            server           = doppio(testHandler);
+            
+            async.waterfall(
+                [
+                    server.start.bind(server),
+                    function (next) {
+                        expect(server.url()).to.equal("http://localhost:80/");
+                        next();
+                    },
+                    checkUrl.bind(null, "http://localhost:54321")
+                ],
+                done
+            );
+        }
+    );
+    
     it("always uses 'http' for the internal scheme", function (done) {
         process.env.APP_URL = "https://foo.com/";
         server              = doppio({ scheme: "https" }, testHandler);
